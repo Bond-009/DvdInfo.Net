@@ -32,6 +32,9 @@ namespace DvdInfo.Tests
 
             // Audio Attributes
             Assert.Equal(AudioCodingMode.AC3, info.AudioAttributes.CodingMode);
+            Assert.Equal(3, info.AudioAttributes.Quantization);
+            Assert.Equal(0, info.AudioAttributes.SampleRate);
+            Assert.Equal(2, info.AudioAttributes.Channels);
         }
     }
 }

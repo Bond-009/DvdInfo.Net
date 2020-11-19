@@ -16,7 +16,7 @@ namespace DvdInfo
         private VmgInfo()
         {
             Version = new Version(0, 0);
-            VideoAttributes = new VideoAttributes(0);
+            ProviderId = string.Empty;
         }
 
         public Version Version { get; set; }
@@ -54,12 +54,12 @@ namespace DvdInfo
                 ThrowHelper.ThrowInvalidDataException("File doesn't start with VMG INFO magic.");
             }
 
-            var info = new VmgInfo();
             using var reader = new BigEndianBinaryReader(stream, Encoding.UTF8, true);
 
             stream.Seek(Constants.VersionNumberOffset, SeekOrigin.Begin);
             var versionShort = reader.ReadUInt16(); // 0x20
             Debug.Assert((versionShort >> 8) == 0, "First byte of the version number should be 0.");
+            var info = new VmgInfo();
             info.Version = new Version((versionShort & 0xff) >> 4, versionShort & 0x0f);
 
             info.Category = reader.ReadUInt32(); // 0x22
