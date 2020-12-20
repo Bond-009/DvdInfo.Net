@@ -2,6 +2,8 @@ namespace DvdInfo
 {
     public static class Constants
     {
+        public const long DvdSectorSize = 2048;
+
         public const long VersionNumberOffset = 0x20;
         public const long CategoryOffset = 0x22;
         public const long NumberOfVolumesOffset = 0x26;
@@ -10,6 +12,7 @@ namespace DvdInfo
         public const long NumberOfTitleSetsOffset = 0x3e;
         public const long ProviderIdOffset = 0x40;
         public const long VmgPositionOffset = 0x60;
+        public const long TableOfTitlesPointerOffset = 0xc4;
         public const long VideoAttributesOffset = 0x100;
 
         public const int ProviderIdLength = 32;

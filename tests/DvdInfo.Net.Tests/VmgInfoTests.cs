@@ -20,6 +20,15 @@ namespace DvdInfo.Tests
             Assert.Equal(8, info.NumberOfTitleSets);
             Assert.Equal(0ul, info.VmgPos);
 
+            Assert.Equal(13, info.TableOfTitles.Length);
+
+            var tt1 = info.TableOfTitles[0];
+            Assert.Equal(1, tt1.NumberOfAngles);
+            Assert.Equal(13, tt1.NumberOfChapters);
+            Assert.Equal(0, tt1.ParentalManagementMask);
+            Assert.Equal(1, tt1.VideoTitleSetNumber);
+            Assert.Equal(1, tt1.TitleNumberWithinVTS);
+
             // Video Attributes
             Assert.Equal(VideoCodingMode.Mpeg2, info.VideoAttributes.CodingMode);
             Assert.Equal(Standard.NTSC, info.VideoAttributes.Standard);

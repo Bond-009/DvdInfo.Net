@@ -17,6 +17,7 @@ namespace DvdInfo
         {
             Version = new Version(0, 0);
             ProviderId = string.Empty;
+            TableOfTitles = Array.Empty<Title>();
         }
 
         public Version Version { get; set; }
@@ -36,6 +37,8 @@ namespace DvdInfo
         public ulong VmgPos { get; set; }
 
         public VideoAttributes VideoAttributes { get; set; }
+
+        public Title[] TableOfTitles { get; set; }
 
         public ushort AudioStreams { get; set; }
 
@@ -78,6 +81,10 @@ namespace DvdInfo
 
             info.VmgPos = reader.ReadUInt64(); // 0x60
 
+            stream.Seek(Constants.TableOfTitlesPointerOffset, SeekOrigin.Begin);
+            stream.Seek(reader.ReadUInt32() * Constants.DvdSectorSize, SeekOrigin.Begin);
+            info.TableOfTitles = ReadTableOfTitles(reader);
+
             stream.Seek(Constants.VideoAttributesOffset, SeekOrigin.Begin);
             info.VideoAttributes = new VideoAttributes(reader.ReadUInt16()); // 0x100
 
@@ -86,6 +93,20 @@ namespace DvdInfo
             info.AudioAttributes = new AudioAttributes(reader.ReadUInt64()); // 0x104
 
             return info;
+        }
+
+        internal static Title[] ReadTableOfTitles(BinaryReader reader)
+        {
+            ushort numTitles = reader.ReadUInt16();
+            reader.BaseStream.Seek(6, SeekOrigin.Current);
+            Console.WriteLine("{0}", numTitles);
+            var titles = new Title[numTitles];
+            for (int i = 0; i < numTitles; i++)
+            {
+                titles[i] = new Title(reader.ReadUInt64(), reader.ReadUInt32());
+            }
+
+            return titles;
         }
     }
 }
