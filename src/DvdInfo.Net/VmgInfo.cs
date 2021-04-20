@@ -54,16 +54,22 @@ namespace DvdInfo
             stream.Read(id);
             if (!id.SequenceEqual(Magic))
             {
-                ThrowHelper.ThrowInvalidDataException("File doesn't start with VMG INFO magic.");
+                ThrowHelper.ThrowInvalidDataException("File doesn't start with VMG IFO magic.");
             }
 
             using var reader = new BigEndianBinaryReader(stream, Encoding.UTF8, true);
 
             stream.Seek(Constants.VersionNumberOffset, SeekOrigin.Begin);
-            var versionShort = reader.ReadUInt16(); // 0x20
-            Debug.Assert((versionShort >> 8) == 0, "First byte of the version number should be 0.");
+            var versionSpan = buffer.Slice(0, 2);
+            stream.Read(versionSpan); // 0x20
+
             var info = new VmgInfo();
-            info.Version = new Version((versionShort & 0xff) >> 4, versionShort & 0x0f);
+            if (!IfoHelper.TryParseVersion(versionSpan, out var version))
+            {
+                ThrowHelper.ThrowInvalidDataException("First byte of the version number should be 0.");
+            }
+
+            info.Version = version;
 
             info.Category = reader.ReadUInt32(); // 0x22
             info.NumberOfVolumes = reader.ReadUInt16(); // 0x26
@@ -99,7 +105,7 @@ namespace DvdInfo
         {
             ushort numTitles = reader.ReadUInt16();
             reader.BaseStream.Seek(6, SeekOrigin.Current);
-            Console.WriteLine("{0}", numTitles);
+
             var titles = new Title[numTitles];
             for (int i = 0; i < numTitles; i++)
             {
